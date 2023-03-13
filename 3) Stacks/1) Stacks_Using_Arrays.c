@@ -4,99 +4,183 @@
 Implement the following stack operations : 
 1. Push 
 2. Pop 
-3. Peek 
-4. Display
+3. Display
+4. Peek
+5. Delete Stack
+6. Top
+7. Exit
 */
 
-#include <stdio.h>
-#include <stdlib.h>
 
-#define N 50
+#include<stdio.h>
+#include<stdlib.h>
 
-int stack[N];
-int top = -1;
+#define INT_MIN -9999
 
-void push()
-{
-    int x;
+// defining a new user-defined
+// data type STACK -> mySTACK
+typedef struct STACK{
+    int *arr;
+    int size;
+    int top;
+}mySTACK;
+
+
+// operation supported on STACK
+void push(mySTACK *s);
+void show(mySTACK *s);
+int pop(mySTACK *s);
+int top(mySTACK *s);
+void delete(mySTACK *s);
+int isFull(mySTACK *s);
+int isEmpty(mySTACK *s);
+
+
+
+//Defining function isEmpty
+int isEmpty(mySTACK *s){
+    if(s->top == -1){
+            return 1;
+        }
+    else{
+        return 0;
+    }
+}
+
+//Defining function isFull
+int isFull(mySTACK *s){
+    if(s->top == s->size - 1){
+        return 1;
+    }
+    else{
+        return 0;
+    }
+}
+
+
+//Defining push operation
+void push(mySTACK *s){
+    int element;
     printf("Enter The Element to push: ");
-    scanf("%d", &x);
-    if (top == N - 1)
-    {
-        printf("Stack overflow\n");
+    scanf("%d", &element);
+    if(isFull(s)){
+        printf("\t STACK overflow \n");
     }
-    else
-    {
-        top++;
-        stack[top] = x;
-        printf("%d pushed to Stack\n", x);
+    else{
+        s->top++;
+        s->arr[s->top] = element;
+        printf("%d Pushed to Stack\n", element);
     }
 }
 
-void pop()
-{
-    int item;
-    if (top == -1)
-    {
-        printf("Stack underflow\n");
+
+//Defining pop operation
+int pop(mySTACK *s){
+    int element;
+    if(isEmpty(s)){
+        printf("\n STACK Underflow \n");
+        return INT_MIN;
     }
-    else
-    {
-        int item = stack[top];
-        top--;
-        printf("Popped: %d\n", item);
+    else{
+        element = s->arr[s->top];
+        s->top--;
+        return element;
     }
 }
 
-void peek()
-{
-    if (top == -1)
-    {
-        printf("Stack is empty\n");
-    }
-    else
-    {
-        printf("Top Element: %d\n", stack[top]);
-    }
-}
 
-void display()
-{
+//Defining peek operation
+int peek(mySTACK *s){
     int i;
-    printf("Displaying Stack....\n");
-    for (int i = top; i >= 0; i--)
-    {
-        printf("%d ", stack[i]);
+    printf("Where you want to peek: ");
+    scanf("%d", &i);
+    int arrayInd = s->top -i + 1;
+    if(arrayInd < 0){
+        printf("Not a valid position for the stack\n");
+        return -1;
     }
-    printf("\n");
+    else{
+        printf("%d", s->arr[arrayInd]);
+        return 0;
+    }
 }
 
-int main()
-{
+
+//Defining show stack operation
+void show(mySTACK *s){
+    int i;
+    printf("\t STACK elements are: ");
+    if (isEmpty(s)){
+        printf("Stack is Empty");
+        printf("\n");
+    }
+    else{
+        for(i=0; i<=s->top; i++)
+            printf("%d ", s->arr[i]);
+        printf("\n");
+    }
+}
+
+
+//Defining top operation
+int top(mySTACK *s){
+    int element;
+    if(isEmpty(s)){
+        printf("\n STACK Underflow \n");
+        return INT_MIN;
+    }
+    else{
+        element = s->arr[s->top];
+        printf("Top Element is: %d", element);
+        return 0;
+    }
+}
+
+
+//Delete Stack
+void delete(mySTACK *s){
+    if(s){
+        if(s->arr){
+            free(s->arr);
+        }
+        free(s);
+    }
+}
+
+int main(){
     int ch;
-
-    while (1)
-    {
-
+    int size;
+    printf("Enter size of stack: ");
+    scanf("%d",&size);
+    struct STACK *s = (struct STACK *) malloc(sizeof(struct STACK));
+    s->size = size;
+    s->top = -1;
+    s->arr = (int *) malloc(s->size * sizeof(int));
+    while (1){
         printf("\n*** Stack Menu ***");
-        printf("\n\n1.Insert\n2.Delete\n3.Display\n4.Peek\n5.Exit");
-        printf("\n\nEnter your choice(1-4):");
+        printf("\n\n1.Insert\n2.Pop\n3.Display\n4.Peek\n5.Delete\n6.Top Element\n7.Exit");
+        printf("\n\nEnter your choice(1-6):\n");
         scanf("%d", &ch);
         switch (ch)
         {
         case 1:
-            push();
+            push(s);
             break;
         case 2:
-            pop();
+            pop(s);
             break;
         case 3:
-            display();
+            show(s);
             break;
         case 4:
-            peek();
+            peek(s);
             break;
         case 5:
+            delete(s);
+        case 6:
+            top(s);
+            break;
+        case 7:
             exit(0);
         default:
             printf("\nWrong Choice!!");
